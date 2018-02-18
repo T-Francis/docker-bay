@@ -10,6 +10,14 @@ The other part is having fun using some cool technologies :)
 
 It build for you a docker playground mainly from compilation of other projects as core and some simplification or custom config.
 
+**Disclaimer**
+
+This project is made to have a basic usage of powerfull tool with a progressive learning curve and finally end with a better knowledge about used technologies.
+
+Most of homemade script are just basic shortcurt and rewriting of native features and the portainer templates system need to be more exploited.
+
+Since it's a side hand project and mainly a sandbox no support will given *NOT MADE FOR USAGE OUSTSIDE A DEVELOPMENT BOX*
+
 *happy coding !*
 
 # **Get Started**
