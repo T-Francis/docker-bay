@@ -1,0 +1,125 @@
+#!/bin/bash
+
+#function that clean file when tranfering windows/unix
+function cleanclrf() {
+    if [ -f "$1" ];then
+        echo "$1 seems to not be a file"
+    else
+        sed -i -e 's/\r$//' $1
+    fi
+}
+
+# docker install script
+function dockerbay-install-docker() {
+    if [ -d "~/docker-bay/" ];then
+        echo "$(echo ~/docker-bay) not found, exiting.."
+    else
+        chmod +x ~/docker-bay/.dockerbay/make-the-install.sh \
+        && sudo ~/docker-bay/.dockerbay/./make-the-install.sh
+    fi
+}
+
+# docker-bay deployement
+function dockerbay-deploy() {
+    if [ $# -eq 0 ];then
+        echo -e "No arguments supplied, you need to specify\ndockerbay-deploy starter\nor\ndockerbay-deploy full"
+    else
+        if [ -d "~/docker-bay/" ];then
+            echo "$(echo ~/docker-bay) not found, exiting.."
+        else
+        mode=$1
+        chmod +x ~/docker-bay/.dockerbay/make-the-deploy.sh \
+            && ~/docker-bay/.dockerbay/./make-the-deploy.sh $mode
+        fi
+    fi
+}
+
+#perform a docker-compose up / docker-compose up -d in a docker-bay container dir
+function dockerbay-up() {
+
+    detachedMode=$2
+    if [ ! -d ~/docker-bay/containers/"$1" ];then
+        echo "$(echo ~/docker-bay/containers)/$1 is not a valid dir, exiting.."
+
+    elif [ ! -f ~/docker-bay/containers/"$1"/docker-compose.yml ];then
+        echo "docker-compose.yml not found in $(echo ~/docker-bay/containers)/$1, exiting.."
+
+    else
+        if [ ! -z "$detachedMode" ]  &&  [ ! "$detachedMode" == "-d" ];then
+            echo -e "Second arg : $2 is invalid\n only -d will be accepted"
+
+        elif [ "$detachedMode" == "-d" ];then
+            cd ~/docker-bay/containers/$1 \
+                && docker-compose up -d \
+                && cd ~/ 
+
+        elif [ -z "$detachedMode" ];then
+            cd ~/docker-bay/containers/$1 \
+                && docker-compose up \
+                && cd ~/ 
+
+        fi
+    fi
+}
+
+#perform a docker-compose down in a docker-bay container dir
+function dockerbay-down() {
+    if [ ! -d ~/docker-bay/containers/"$1" ];then
+        echo "$(echo ~/docker-bay/containers)/$1 is not a valid dir, exiting.."
+
+    elif [ ! -f ~/docker-bay/containers/"$1"/docker-compose.yml ];then
+        echo "docker-compose.yml not found in $(echo ~/docker-bay/containers)/$1, exiting.."
+
+    else
+        cd ~/docker-bay/containers/$1 \
+            && docker-compose down \
+            && cd ~/
+    fi
+}
+
+#delete a docker-bay volume
+function dockerbay-delete-volume() {
+    if [ ! -d ~/docker-bay/volumes/"$1" ];then
+        echo "$(echo ~/docker-bay/volumes)/$1 is not a valid dir, exiting.."
+    else
+        sudo rm -rf ~/docker-bay/volumes/$1
+        echo "$(echo ~/docker-bay/volumes)/$1 deleted, exiting.."
+    fi
+}
+
+#give permission to the current user on a docker-bay dir
+function dockerbay-permission() {
+    if [ ! -d ~/docker-bay/"$1" ];then
+        echo "$(echo ~/docker-bay)/$1 is not a valid dir, exiting.."
+    else
+        userUID=$UID
+        user=$USER
+        sudo chown -R $userUID:$userUID ~/docker-bay/"$1"
+        echo -e "Recursive chown was made on : $(echo ~/docker-bay)/$1 \nFor user : $user with UID : $userUID"
+    fi
+}
+
+#make a ssh tunnel to the given container 
+function dockerbay-tunnel() {
+    docker exec -it $1 /bin/bash
+}
+
+#perform a docker system prune all
+function dockerbay-prune() {
+    docker system prune -a
+}
+
+#stop all docker container
+alias dockerbay-stop-all-container='sudo docker stop $(sudo docker ps -a -q)'
+
+#delete all docker container
+alias dockerbay-delete-all-container='sudo docker rm $(sudo docker ps -a -q)'
+
+#delete all docker images
+alias dockerbay-delete-all-image='sudo docker rmi $(sudo docker images -q)'
+
+#perform a docker system prune all
+alias dockerbay-prune='docker system prune -a'
+
+#stop and delete all docker container, delete all images, perform a system prune all
+alias dockerbay-armagueddon='dockerbay-stop-all-container && dockerbay-delete-all-container && dockerbay-delete-all-image && docker system prune --volumes'

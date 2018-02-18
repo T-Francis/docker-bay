@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  adminer:
+    image: adminer:latest
+    container_name: "adminer"
+    restart: always
+    networks:
+      - traefik
+    expose:
+       - "8080"
+    labels:
+      - "traefik.backend=adminer"
+      - "traefik.frontend.rule=Host:adminer.local"
+
+networks:
+  traefik:
+    external:
+      name: traefik_webgateway

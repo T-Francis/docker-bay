@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks:
+      - traefik
+    stdin_open: true
+    tty: true
+    
+networks:
+  traefik:
+    external:
+      name: traefik_webgateway

@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  sample_node_app:
+    image: node:carbon-slim
+    container_name: "sample-node-app"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=developement
+    volumes:
+      - ~/docker-bay/workspaces/node-apps/sample-node-app:/home/node/app
+    expose:
+      - "3000"
+    stdin_open: true
+    tty: true
+    networks:
+      - traefik
+    labels:
+      - "traefik.backend=sample-node-app"
+      - "traefik.frontend.rule=Host:sample-node-app.local"
+
+networks:
+  traefik:
+    external:
+      name: traefik_webgateway
