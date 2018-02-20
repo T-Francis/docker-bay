@@ -124,8 +124,9 @@ your.machine.host.ip	  portainer.local
 your.machine.host.ip 	  adminer.local
 ...
 # example
-# 192.168.1.27              portainer.local
-
+# 192.168.1.27 	        portainer.local
+# 192.168.1.27 		    adminer.local
+# 192.168.1.27 		    node-sample.local
 ```
 
 ## ***Access to container***
@@ -154,6 +155,8 @@ http://your.machine.host.ip:8080
 
 # based on example
 # http://portainer.local
+# http://adminer.local
+# http://node-sample.local
 ```
 
 - Alternatives browser access
