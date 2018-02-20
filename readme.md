@@ -52,7 +52,8 @@ Maybe check version and ready to go !
 docker --version && docker-compose --version
 ```
  
-# **Lazy install** *(docker install)*
+# **Lazy install** 
+(docker install ans docker-compose installation)
 
 If you just installed your *debian-9* or *ubuntu-16.04*
 
@@ -64,7 +65,8 @@ It run the installation script with 3 short dialog about kind of wanted installa
 From now run any container you want or look about the [Lazy deploy](#lazy-deploy)
 
 
-# **Lazy deploy** *(docker-bay deployement)*
+# **Lazy deploy** 
+(docker-bay deployement)
 
 ## ***IMPORTANT NOTE***
 
@@ -182,16 +184,23 @@ http://your.machine.host.ip:3000
 
 ## ***Access to SGBD's***
 
-### ***From adminer***
+### ***From adminer (credentials by default)***
 
 ```plaintext
  http://adminer.local
 ```
-`server` : mysql
-
-`user` : root
-
-`password` : mysqlroot
+mysql
+```plaintext
+server : mysql
+user : root / mysql_user
+password : mysqlroot / mysql_user_password
+```
+mariadb
+```plaintext
+server : mariadbroot
+user : root / mariadb_user
+password : mariadbroot / mariadb_user_password
+```
 
 **Note**
 
@@ -200,3 +209,10 @@ In example, **docker service** name are used, **server ip** will be the **docker
 ### ***From an application***
 
 **server ip** will be the **docker ip** as far they're on the same **networks** (*they are by default*), check **portainer or traefik dashboard** to check ip's and network
+
+
+## ***To do***
+
+- have a better management of arguments for dockerbay shortcuts (docker compose --build, docker exec --user, etc...)
+- get a deeper look about portainer templates system
+- ... so many more
