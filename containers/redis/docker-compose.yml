@@ -6,10 +6,10 @@ services:
     container_name: redis
     networks:
       - traefik
-    ports:
-      - "6379:6379"
     expose:
       - "6379"
+    ports:
+      - "6379:6379"
     stdin_open: true
     tty: true
     labels:

@@ -210,6 +210,41 @@ In example, **docker service** name are used, **server ip** will be the **docker
 
 **server ip** will be the **docker ip** as far they're on the same **networks** (*they are by default*), check **portainer or traefik dashboard** to check ip's and network
 
+## ***Default Ports Mapping***
+
+```yml
+adminer:
+    expose:
+       - "8080"
+    ports:
+       - "808:8080"
+
+mariadb:
+    expose:
+       - "3306"
+
+mysql:
+    expose:
+       - "3306"
+
+portainer:
+    expose:
+      - "80"    
+    ports:
+      - "9009:9000"
+
+redis:
+    expose:
+      - "6379"
+    ports:
+      - "6379:6379"
+
+traeffik:
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+```
 
 ## ***To do***
 
