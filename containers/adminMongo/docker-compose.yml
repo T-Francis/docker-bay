@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  dockerbay_adminmongo:
+    build: ./
+    image: dockerbay/adminmongo
+    container_name: dockerbay-adminmongo
+    networks:
+      - traefik
+    environment:
+      - CONN_NAME=dockerbay
+      - DB_HOST=dockerbay_mongodb
+      - DB_PORT=27017
+    ports:
+      - "3123:1234"
+    labels:
+      - "traefik.port=1234"
+      - "traefik.backend=dockerbay_adminmongo"
+      - "traefik.frontend.rule=Host:adminmongo.dockerbay"
+    command : node app.js
+    stdin_open: true
+    tty: true
+
+networks:
+  traefik:
+    external:
+      name: traefik_webgateway

@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  dockerbay_mongodb:
+    container_name: dockerbay-mongo
+    image: mongo:latest
+    volumes: 
+      - ~/docker-bay/volumes/mongo-data:/data/db
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - traefik
+    environment:
+      MONGODB_ADMIN_USER: root
+      MONGODB_ADMIN_PASS: root
+      MONGODB_APPLICATION_DATABASE: dockerbay_db
+      MONGODB_APPLICATION_USER: dockerbayuser
+      MONGODB_APPLICATION_PASS: dockerbayuser
+
+networks:
+  traefik:
+    external:
+      name: traefik_webgateway

@@ -52,7 +52,8 @@ Maybe check version and ready to go !
 docker --version && docker-compose --version
 ```
  
-# **Lazy install** *(docker install)*
+# **Lazy install** 
+(docker install ans docker-compose installation)
 
 If you just installed your *debian-9* or *ubuntu-16.04*
 
@@ -64,7 +65,8 @@ It run the installation script with 3 short dialog about kind of wanted installa
 From now run any container you want or look about the [Lazy deploy](#lazy-deploy)
 
 
-# **Lazy deploy** *(docker-bay deployement)*
+# **Lazy deploy** 
+(docker-bay deployement)
 
 ## ***IMPORTANT NOTE***
 
@@ -78,7 +80,7 @@ dockerbay-deploy starter
 dockerbay-deploy full
 ```
 - starter containers : *trafik* , *portainer*
-- full containers : *trafik* , *portainer* *mysql* , *maria-db* , *adminer* , *redis* , *nodejs-sample-container*
+- extra containers : *mysql* , *maria-db* , *mongodb* , *adminer* , *adminMongo* , *redis* , *nodejs-workspace* , *ungit*
 
 # **Usage**
 
@@ -120,13 +122,16 @@ Edit `hosts` file or have a valid DNS redirection to the machine host
 
 - Example of edited `hosts` file
 ```conf
-your.machine.host.ip	  portainer.local
-your.machine.host.ip 	  adminer.local
+your.machine.host.ip	  portainer.dockerbay
+your.machine.host.ip 	  adminer.dockerbay
 ...
 # example
-# 192.168.1.27 	        portainer.local
-# 192.168.1.27 		    adminer.local
-# 192.168.1.27 		    node-sample.local
+# 192.168.1.27		portainer.dockerbay
+# 192.168.1.27 		adminer.dockerbay
+# 192.168.1.27 		ungit.dockerbay
+# 192.168.1.27 		adminmongo.dockerbay
+# 192.168.1.27 		nodejs.dockerbay
+# 192.168.1.27 		traefik.dockerbay
 ```
 
 ## ***Access to container***
@@ -147,56 +152,90 @@ http://your.machine.host.ip:8080
 
 # based on example
 # http://192.168.1.27:8080/
+# OR
+# http://traefik.dockerbay
 ```
 
 - Access to portainer example
 ```plaintext
-http://your.machine.host.ip:8080
+http://your.machine.host.ip:9009
 
 # based on example
-# http://portainer.local
-# http://adminer.local
-# http://node-sample.local
-```
-
-- Alternatives browser access
-
-Default config for `docker-compose.yml` is to expose containers ports and give a traefik label to manage redirection
-
-```yml
-# CHANGE
-    expose:
-        - "3000"
-# FOR
-    ports:
-        - "3000:3000"
-```
-
-Then access the container
-```plaintext
-http://your.machine.host.ip:3000
-
-# based on example
-# http://192.168.1.27:3000/
+# http://192.168.1.27:9009/
+# OR
+# http://portainer.dockerbay
 ```
 
 ## ***Access to SGBD's***
 
-### ***From adminer***
+### ***From adminer (credentials by default)***
 
 ```plaintext
- http://adminer.local
+ http://adminer.dockerbay
 ```
-`server` : mysql
+```plaintext
+server : 
+    dockerbay_mysql 
+    dockerbay_mongodb
+    dockerbay_mariadb
 
-`user` : root
-
-`password` : mysqlroot
+for each :
+    database : dockerbay_db
+    user : root OR dockerbayuser
+    password : root OR dockerbayuser
+```
 
 **Note**
 
-In example, **docker service** name are used, **server ip** will be the **docker ip** as far they're on the same **networks** (*they are by default*), check **portainer or traefik dashboard** to check ip's and network
+In example, **docker service** name are used, **server ip** will be the **docker network ip** as far they're on the same **networks** (*they are by default*), check **portainer or traefik dashboard** to check ip's and network
 
 ### ***From an application***
 
 **server ip** will be the **docker ip** as far they're on the same **networks** (*they are by default*), check **portainer or traefik dashboard** to check ip's and network
+
+## ***Dockerbay compose exemple***
+
+```yml
+version: "3"
+
+services:
+  dockerbay_adminmongo:
+    build: ./
+    image: dockerbay/adminmongo
+    container_name: dockerbay-adminmongo
+    networks:
+      - traefik
+    environment:
+      - CONN_NAME=dockerbay
+      - DB_HOST=dockerbay_mongodb
+      - DB_PORT=27017
+    ports:
+      - "3123:1234"
+    labels:
+      - "traefik.port=1234"
+      - "traefik.backend=dockerbay_adminmongo"
+      - "traefik.frontend.rule=Host:adminmongo.dockerbay"
+    command : node app.js
+    stdin_open: true
+    tty: true
+
+networks:
+  traefik:
+    external:
+      name: traefik_webgateway
+```
+
+## ***Changelog***
+
+- Release:
+    - 0.1:
+        - Rework of the default container configuration (default name, service, ports ...)
+        - Introduction of mongodb, adminMongo, ungit containers
+
+## ***To do***
+
+- have a better management of arguments for dockerbay shortcuts (docker compose --build, docker exec --user, etc...)
+- get a deeper look about portainer templates system
+- fix the templates issues
+- take a look about running sql script on staturp
+- ... so many more

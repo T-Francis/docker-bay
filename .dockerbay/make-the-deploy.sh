@@ -11,19 +11,27 @@ function starterDeploy() {
     cd ~/docker-bay/containers/portainer/ && docker-compose up -d
 }
 
-# deploy extra container such as sgbd's, adminer, redis...
+# deploy extra container
 function deployExtra() {
     # deploying sgbd's containers
-    cd ~/docker-bay/containers/mysql/ && docker-compose up -d
+    cd ~/docker-bay/containers/mysql && docker-compose up -d
 
-    cd ~/docker-bay/containers/mariadb/ && docker-compose up -d
+    cd ~/docker-bay/containers/mariadb && docker-compose up -d
 
-    cd ~/docker-bay/containers/redis/ && docker-compose up -d
+    cd ~/docker-bay/containers/mongodb && docker-compose up -d
 
-    cd ~/docker-bay/containers/nodejs/sample-container/ && docker-compose up -d
+    # deploying redis container for cache
+    cd ~/docker-bay/containers/redis && docker-compose up -d
 
-    # deploy adminer to have a fast and easy access to the database
-    cd ~/docker-bay/containers/adminer/ && docker-compose up -d
+    # deploying a nodejs workspace
+    cd ~/docker-bay/containers/nodejs && docker-compose up -d
+
+    # deploying ungit
+    cd ~/docker-bay/containers/ungit && docker-compose up -d
+
+    # deploy adminer and admin mongo for db access
+    cd ~/docker-bay/containers/adminer && docker-compose up -d
+    cd ~/docker-bay/containers/adminMongo && docker-compose up -d
 }
 
 #  

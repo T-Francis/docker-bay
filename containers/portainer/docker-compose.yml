@@ -10,19 +10,26 @@ services:
       - ~/docker-bay/volumes/portainer/templates/templates.json:/usr/share/nginx/html/templates.json
     networks:
       - traefik
+    labels:
+      - "traefik.backend=portainer_templates"
+      - "traefik.frontend.rule=Host:portainer.templates"
 
   portainer:
     image: portainer/portainer
     container_name: "portainer-application"
-    command: --templates http://templates/templates.json --host=unix:///var/run/docker.sock
+    command: --templates http://portainer.templates/templates.json --host=unix:///var/run/docker.sock
     networks:
       - traefik
+    expose:
+      - "9000"    
+    ports:
+      - "9009:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/docker-bay/volumes/portainer/data:/data
     labels:
       - "traefik.backend=portainer"
-      - "traefik.frontend.rule=Host:portainer.local"
+      - "traefik.frontend.rule=Host:portainer.dockerbay"
 
   watchtower:
     image: v2tec/watchtower
