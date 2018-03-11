@@ -234,7 +234,6 @@ networks:
 
 ## ***To do***
 
-<<<<<<< HEAD
 - have a better management of arguments for dockerbay shortcuts (docker compose --build, docker exec --user, etc...)
 - get a deeper look about portainer templates system
 - fix the templates issues
