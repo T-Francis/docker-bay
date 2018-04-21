@@ -38,6 +38,7 @@ function dockerbay-deploy() {
 function dockerbay-up() {
 
     detachedMode=$2
+    build=$3
     if [ ! -d ~/docker-bay/containers/"$1" ];then
         echo "$(echo ~/docker-bay/containers)/$1 is not a valid dir, exiting.."
 
@@ -50,12 +51,12 @@ function dockerbay-up() {
 
         elif [ "$detachedMode" == "-d" ];then
             cd ~/docker-bay/containers/$1 \
-                && docker-compose up -d \
+                && docker-compose up -d $3\
                 && cd ~/ 
 
         elif [ -z "$detachedMode" ];then
             cd ~/docker-bay/containers/$1 \
-                && docker-compose up \
+                && docker-compose up $3\
                 && cd ~/ 
 
         fi
@@ -101,7 +102,7 @@ function dockerbay-permission() {
 
 #make a ssh tunnel to the given container 
 function dockerbay-tunnel() {
-    docker exec -it $1 /bin/bash
+    docker exec -it $1 sh -c "stty rows 50 && stty cols 150 && bash"
 }
 
 #perform a docker system prune all
