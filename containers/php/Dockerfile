@@ -36,6 +36,12 @@ COPY xdebug.ini /etc/php/7.1/mods-available/xdebug.ini
 COPY start-container /usr/local/bin/start-container
 RUN chmod +x /usr/local/bin/start-container
 
+# create a user for permissions facilities with johndev as name & password and with 1000 as UID
+# just adjust name and UID to fit with yours
+RUN useradd -m johndev && echo "johndev:johndev" | chpasswd && adduser johndev sudo
+RUN usermod -u 1000 johndev
+RUN chown -R 1000:1000 /var/www/
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 WORKDIR /var/www/

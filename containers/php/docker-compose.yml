@@ -23,7 +23,7 @@ services:
     labels:
       - "traefik.web.port=80"
       - "traefik.web.backend=dockerbay_php"
-      - "traefik.web.frontend.rule=Host:laratest.dockerbay"
+      - "traefik.web.frontend.rule=Host:php.dockerbay"
       
 networks:
   traefik:
