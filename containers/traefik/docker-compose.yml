@@ -4,6 +4,7 @@ services:
   proxy:
     image: traefik
     container_name: "traefik"
+    restart: always    
     command: --api --docker --docker.domain=docker.localhost --logLevel=DEBUG
     networks:
       - webgateway

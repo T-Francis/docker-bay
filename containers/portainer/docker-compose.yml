@@ -4,6 +4,7 @@ services:
   portainer_templates:
     image: nginx:alpine
     container_name: "portainer-templates"
+    restart: always   
     expose:
       - "80"
     volumes:
@@ -17,7 +18,8 @@ services:
   portainer:
     image: portainer/portainer
     container_name: "portainer-application"
-    command: --templates http://portainer.templates/templates.json --host=unix:///var/run/docker.sock
+    restart: always  
+    command: --templates http://portainer_templates/templates.json --host=unix:///var/run/docker.sock
     networks:
       - traefik
     expose:
@@ -29,11 +31,12 @@ services:
       - ~/docker-bay/volumes/portainer/data:/data
     labels:
       - "traefik.backend=portainer"
-      - "traefik.frontend.rule=Host:portainer.dockerbay"
+      - "traefik.frontend.rule=Host:www.portainer.dockerbay,portainer.dockerbay"
 
   watchtower:
     image: v2tec/watchtower
     container_name: "portainer-watchtower"
+    restart: always
     command: --cleanup portainer-app portainer-watchtower portainer/templates
     networks:
       - traefik
