@@ -1,47 +1,40 @@
-version: '3'
+version: 3
 
 services:
   portainer_templates:
+    container_name: portainer-templates
     image: nginx:alpine
-    container_name: "portainer-templates"
     restart: always   
-    expose:
-      - "80"
+    labels:
+      - traefik.backend=portainer_templates
     volumes:
       - ~/docker-bay/volumes/portainer/templates/templates.json:/usr/share/nginx/html/templates.json
     networks:
       - traefik
-    labels:
-      - "traefik.backend=portainer_templates"
-      - "traefik.frontend.rule=Host:portainer.templates"
 
   portainer:
+    container_name: portainer-application
     image: portainer/portainer
-    container_name: "portainer-application"
     restart: always  
+    labels:
+      - traefik.backend=portainer
+      - traefik.frontend.rule=Host:portainer.local
     command: --templates http://portainer_templates/templates.json --host=unix:///var/run/docker.sock
-    networks:
-      - traefik
-    expose:
-      - "9000"    
-    ports:
-      - "9009:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/docker-bay/volumes/portainer/data:/data
-    labels:
-      - "traefik.backend=portainer"
-      - "traefik.frontend.rule=Host:www.portainer.dockerbay,portainer.dockerbay"
-
-  watchtower:
-    image: v2tec/watchtower
-    container_name: "portainer-watchtower"
-    restart: always
-    command: --cleanup portainer-app portainer-watchtower portainer/templates
     networks:
       - traefik
+
+  watchtower:
+    container_name: portainer-watchtower
+    image: v2tec/watchtower
+    restart: always
+    command: --cleanup portainer-app portainer-watchtower portainer/templates
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik
 
 networks:
   traefik:

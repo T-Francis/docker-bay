@@ -1,27 +1,21 @@
-version: "3"
+version: 3
 
 services:
-  dockerbay_ungit:
-    container_name: dockerbay_ungit
+  ungit:
+    container_name: ungit
     build:
-      context: ./
+      context: ~/docker-bay/dockerfiles/ungit
       dockerfile: Dockerfile
-    image: ungit
-    ports:
-      - "8448:8448"
+    restart: always    
+    working_dir: /repositories
+    labels:
+      - traefik.port=8448
+      - traefik.backend=ungit
+      - traefik.frontend.rule=Host:ungit.local
     volumes: 
-      - ~/docker-bay/workspaces:/repo
-    container_name: "dockerbay-ungit"
-    working_dir: /repo
+      - ~/docker-bay/workspaces:/repositories
     networks:
       - traefik
-    # user: "ungit"
-    labels:
-      - "traefik.port=8448"
-      - "traefik.backend=dockerbay_ungit"
-      - "traefik.frontend.rule=Host:ungit.dockerbay"
-    stdin_open: true
-    tty: true
 
 networks:
   traefik:

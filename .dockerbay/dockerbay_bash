@@ -1,14 +1,5 @@
 #!/bin/bash
 
-#function that clean file when tranfering windows/unix
-function cleanclrf() {
-    if [ -f "$1" ];then
-        echo "$1 seems to not be a file"
-    else
-        sed -i -e 's/\r$//' $1
-    fi
-}
-
 # docker install script
 function dockerbay-install-docker() {
     if [ -d "~/docker-bay/" ];then
@@ -22,7 +13,7 @@ function dockerbay-install-docker() {
 # docker-bay deployement
 function dockerbay-deploy() {
     if [ $# -eq 0 ];then
-        echo -e "No arguments supplied, you need to specify\ndockerbay-deploy starter\nor\ndockerbay-deploy full"
+        echo -e "No arguments supplied, you need to specify\ndockerbay-deploy starter"
     else
         if [ -d "~/docker-bay/" ];then
             echo "$(echo ~/docker-bay) not found, exiting.."

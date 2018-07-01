@@ -1,18 +1,16 @@
-version: '3'
+version: 3
 
 services:
-  dockerbay_adminer:
-    image: adminer:latest
-    container_name: "dockerbay-adminer"
+  adminer:
+    container_name: adminer
+    image: adminer
     restart: always
+    labels:
+      - traefik.port=8080    
+      - traefik.backend=adminer
+      - traefik.frontend.rule=Host:adminer.local
     networks:
       - traefik
-    ports:
-       - "8181:8080"
-    labels:
-      - "traefik.port=8080"    
-      - "traefik.backend=dockerbay_adminer"
-      - "traefik.frontend.rule=Host:adminer.dockerbay"
 
 networks:
   traefik:

@@ -1,20 +1,15 @@
-version: '3'
+version: 3
 
 services:
-  dockerbay_redis:
-    image: redis:latest
-    container_name: dockerbay-redis
+  redis:
+    container_name: redis
+    image: redis
+    restart: always  
+    labels:
+      - traefik.backend=redis
+      - traefik.frontend.rule=Host:redis.local
     networks:
       - traefik
-    expose:
-      - "6379"
-    ports:
-      - "6379:6379"
-    stdin_open: true
-    tty: true
-    labels:
-      - "traefik.backend=dockerbay_redis"
-      - "traefik.frontend.rule=Host:redis.dockerbay"
       
 networks:
   traefik:

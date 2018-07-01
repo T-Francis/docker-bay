@@ -76,11 +76,8 @@ Choose either **starter** or **full** deployement, you can revert or redeploy at
 
 ```bash
 dockerbay-deploy starter
-#or
-dockerbay-deploy full
 ```
 - starter containers : *trafik* , *portainer*
-- extra containers : *mysql* , *maria-db* , *mongodb* , *adminer* , *adminMongo* , *redis* , *nodejs-workspace* , *ungit*
 
 # **Usage**
 
@@ -126,12 +123,12 @@ your.machine.host.ip	  portainer.dockerbay
 your.machine.host.ip 	  adminer.dockerbay
 ...
 # example
-# 192.168.1.27		portainer.dockerbay
-# 192.168.1.27 		adminer.dockerbay
-# 192.168.1.27 		ungit.dockerbay
-# 192.168.1.27 		adminmongo.dockerbay
-# 192.168.1.27 		nodejs.dockerbay
-# 192.168.1.27 		traefik.dockerbay
+# 192.168.1.27		portainer.local
+# 192.168.1.27 		adminer.local
+# 192.168.1.27 		ungit.local
+# 192.168.1.27 		adminmongo.local
+# 192.168.1.27 		nodejs.local
+# 192.168.1.27 		traefik.local
 ```
 
 ## ***Access to container***
@@ -148,22 +145,13 @@ dockerbay-tunnel nameOrIdOfContainer
 
 - Access to traefik dashboard :
 ```plaintext
-http://your.machine.host.ip:8080
-
-# based on example
-# http://192.168.1.27:8080/
-# OR
-# http://traefik.dockerbay
+# http://traefik.local
 ```
 
 - Access to portainer example
 ```plaintext
-http://your.machine.host.ip:9009
-
 # based on example
-# http://192.168.1.27:9009/
-# OR
-# http://portainer.dockerbay
+# http://portainer.local
 ```
 
 ## ***Access to SGBD's***
@@ -171,18 +159,17 @@ http://your.machine.host.ip:9009
 ### ***From adminer (credentials by default)***
 
 ```plaintext
- http://adminer.dockerbay
+ http://adminer.local
 ```
 ```plaintext
 server : 
-    dockerbay_mysql 
-    dockerbay_mongodb
-    dockerbay_mariadb
+    mysql 
+    mongodb
+    mariadb
 
 for each :
-    database : dockerbay_db
-    user : root OR dockerbayuser
-    password : root OR dockerbayuser
+    database : mysql / mongodb / mariadb
+    user & password : root OR mysql-user / mongodb-user / mariadb-user  
 ```
 
 **Note**
@@ -196,28 +183,49 @@ In example, **docker service** name are used, **server ip** will be the **docker
 ## ***Dockerbay compose exemple***
 
 ```yml
-version: "3"
+version: 3
 
 services:
-  dockerbay_adminmongo:
-    build: ./
-    image: dockerbay/adminmongo
-    container_name: dockerbay-adminmongo
+  adminmongo:
+    build:
+      context: ~/docker-bay/dockerfiles/adminmongo
+      dockerfile: Dockerfile
+    container_name: adminmongo
     networks:
       - traefik
     environment:
-      - CONN_NAME=dockerbay
-      - DB_HOST=dockerbay_mongodb
+      - CONN_NAME=local
+      - DB_HOST=mongodb
       - DB_PORT=27017
-    ports:
-      - "3123:1234"
+      - DB_USERNAME=mongo-user
+      - DB_PASSWORD=mongo-user
     labels:
-      - "traefik.port=1234"
-      - "traefik.backend=dockerbay_adminmongo"
-      - "traefik.frontend.rule=Host:adminmongo.dockerbay"
+      - traefik.port=1234
+      - traefik.backend=adminmongo
+      - traefik.frontend.rule=Host:adminmongo.local
     command : node app.js
     stdin_open: true
     tty: true
+    depends_on:
+        mongodb
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    volumes: 
+      - ~/docker-bay/volumes/mongodb:/data/db
+    restart: always
+    networks:
+      - traefik
+    environment:
+      MONGODB_ADMIN_USER: root
+      MONGODB_ADMIN_PASS: root
+      MONGODB_APPLICATION_DATABASE: example_database
+      MONGODB_APPLICATION_USER: mongo-user
+      MONGODB_APPLICATION_PASS: mongo-user
+    labels:
+      - traefik.port=27017
+      - traefik.backend=mongodb
 
 networks:
   traefik:
@@ -231,11 +239,19 @@ networks:
     - 0.1:
         - Rework of the default container configuration (default name, service, ports ...)
         - Introduction of mongodb, adminMongo, ungit containers
+    - 0.2:
+        - This update bring a lot of change that implying the rewrite of a lot of file, it's clearly not a good practice to made so many change at the same time, but sometimes, what need to be done has to be done :s
+        - Introduction of the `dockerfiles/` directory that will serve as image build workspace
+        - Rework of the `adminmongo`&`mongodb` / `ungit` container (move of the Dockerfile)
+        - update of the naming for default values host/redirect, container name etc .. (will be more generic and friendly than *-dockerbay)
+        - Remove of the `deploy-full` function 
+        - Remove of the `php` and `nodejs` container (will be convert in dockerfiles/image)
+        - Remove of the `clean-clrf` function (didn't work as expected)
+        - Rewrite of the docker compose files, remove of the quote, structuration of the yaml        
 
 ## ***To do***
 
 - have a better management of arguments for dockerbay shortcuts (docker compose --build, docker exec --user, etc...)
 - get a deeper look about portainer templates system
-- fix the templates issues
 - take a look about running sql script on staturp
 - ... so many more

@@ -1,21 +1,22 @@
-version: '3.3'
+version: 3
 
 services:
-   dockerbay_mariadb:
-     image: mariadb:latest
-     container_name: "dockerbay-mariadb"
-     volumes:
-       - ~/docker-bay/volumes/mariadb-data:/var/lib/mysql
+   mariadb:
+     container_name: mariadb
+     image: mariadb
      restart: always
-     networks:
-       - traefik
-     ports:
-       - "13306:3306"
      environment:
        MYSQL_ROOT_PASSWORD: root
-       MYSQL_DATABASE: dockerbay_db
-       MYSQL_USER: dockerbayuser
-       MYSQL_PASSWORD: dockerbayuser
+       MYSQL_DATABASE: example_database
+       MYSQL_USER: mariadb-user
+       MYSQL_PASSWORD: mariadb-user
+    labels:
+      - traefik.port=3306    
+      - traefik.backend=mariadb
+     volumes:
+       - ~/docker-bay/volumes/mariadb-data:/var/lib/mysql
+     networks:
+       - traefik
 
 networks:
   traefik:
