@@ -1,21 +1,21 @@
 version: '3'
 
 services:
-   mysql:
-     container_name: mysql
-     image: mysql
-     restart: always
-     environment:
+  mysql:
+    container_name: mysql
+    image: mysql
+    restart: always
+    environment:
        MYSQL_ROOT_PASSWORD: root
        MYSQL_DATABASE: example_database
        MYSQL_USER: mysql-user
        MYSQL_PASSWORD: mysql-user
     labels:
-      - traefik.port=3306    
+      - traefik.port=3306
       - traefik.backend=mysql
-     volumes:
+    volumes:
        - ~/docker-bay/volumes/mysql-data:/var/lib/mysql
-     networks:
+    networks:
        - traefik
 
 networks:
