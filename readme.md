@@ -86,8 +86,8 @@ Run any container by changing the `docker-compose.yml` in any containers directo
 ## ***Add a Container***
 
 ```bash
-mkdir ~/docker-bay/containers/newContainer
-cd ~/docker-bay/containers/newContainer
+mkdir ~/docker-bay/services/newService
+cd ~/docker-bay/services/newService
 touch docker-compose.yml
 nano docker-compose.yml
 # write some config
@@ -98,9 +98,9 @@ nano docker-compose.yml
 
 - `dockerbay-up` 
 ```bash
-dockerbay-up newContainer # -d for detached mode
+dockerbay-up newService # -d for detached mode
 #or
-dockerbay-up newContainer/sub-directory/nested-sub-directory  # -d for detached mode
+dockerbay-up newService/sub-directory/nested-sub-directory  # -d for detached mode
 ```
 - `dockerbay-down` 
 ```bash
@@ -109,7 +109,7 @@ dockerbay-down any-containers
 dockerbay-down any-containers/sub-directory/nested-sub-directory
 ```
 
-*dockerbay-up* and *dockerbay-down* are shortcuts for *docker-compose up (-d)* and *docker-compose down* for a given containers location in `~/docker-bay/containers`
+*dockerbay-up* and *dockerbay-down* are shortcuts for *docker-compose up (-d)* and *docker-compose down* for a given containers location in `~/docker-bay/services`
 
 ## ***Host & Redirect***
 

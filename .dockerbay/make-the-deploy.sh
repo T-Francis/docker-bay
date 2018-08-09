@@ -6,9 +6,9 @@
 # deploy starter container traefik,portainer
 function starterDeploy() {
     # deploying treafik at first since it's front proxy
-    cd ~/docker-bay/containers/traefik/ && docker-compose up -d 
+    cd ~/docker-bay/services/traefik/ && docker-compose up -d 
     # deploying portainer
-    cd ~/docker-bay/containers/portainer/ && docker-compose up -d
+    cd ~/docker-bay/services/portainer/ && docker-compose up -d
 }
 
 #  

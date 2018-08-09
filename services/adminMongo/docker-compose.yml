@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  adminmongo:
+    container_name: adminmongo
+    build:
+      context: ~/docker-bay/dockerfiles/adminmongo
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - CONN_NAME=local
+      - DB_HOST=mongodb
+      - DB_PORT=27017
+      - DB_USERNAME=mongo-user
+      - DB_PASSWORD=mongo-user
+    labels:
+      - traefik.port=1234
+      - traefik.backend=adminmongo
+      - traefik.frontend.rule=Host:adminmongo.local
+    depends_on:
+      mongodb   
+    command : node app.js
+    networks:
+      - traefik
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGODB_ADMIN_USER: root
+      MONGODB_ADMIN_PASS: root
+      MONGODB_APPLICATION_DATABASE: example_database
+      MONGODB_APPLICATION_USER: mongo-user
+      MONGODB_APPLICATION_PASS: mongo-user
+    labels:
+      - traefik.port=27017
+      - traefik.backend=mongodb
+    volumes: 
+      - ~/docker-bay/volumes/mongodb:/data/db
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external:
+      name: traefik_webgateway

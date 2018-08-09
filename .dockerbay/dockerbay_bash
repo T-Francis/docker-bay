@@ -30,23 +30,23 @@ function dockerbay-up() {
 
     detachedMode=$2
     build=$3
-    if [ ! -d ~/docker-bay/containers/"$1" ];then
-        echo "$(echo ~/docker-bay/containers)/$1 is not a valid dir, exiting.."
+    if [ ! -d ~/docker-bay/services/"$1" ];then
+        echo "$(echo ~/docker-bay/services)/$1 is not a valid dir, exiting.."
 
-    elif [ ! -f ~/docker-bay/containers/"$1"/docker-compose.yml ];then
-        echo "docker-compose.yml not found in $(echo ~/docker-bay/containers)/$1, exiting.."
+    elif [ ! -f ~/docker-bay/services/"$1"/docker-compose.yml ];then
+        echo "docker-compose.yml not found in $(echo ~/docker-bay/services)/$1, exiting.."
 
     else
         if [ ! -z "$detachedMode" ]  &&  [ ! "$detachedMode" == "-d" ];then
             echo -e "Second arg : $2 is invalid\n only -d will be accepted"
 
         elif [ "$detachedMode" == "-d" ];then
-            cd ~/docker-bay/containers/$1 \
+            cd ~/docker-bay/services/$1 \
                 && docker-compose up -d $3\
                 && cd ~/ 
 
         elif [ -z "$detachedMode" ];then
-            cd ~/docker-bay/containers/$1 \
+            cd ~/docker-bay/services/$1 \
                 && docker-compose up $3\
                 && cd ~/ 
 
@@ -56,14 +56,14 @@ function dockerbay-up() {
 
 #perform a docker-compose down in a docker-bay container dir
 function dockerbay-down() {
-    if [ ! -d ~/docker-bay/containers/"$1" ];then
-        echo "$(echo ~/docker-bay/containers)/$1 is not a valid dir, exiting.."
+    if [ ! -d ~/docker-bay/services/"$1" ];then
+        echo "$(echo ~/docker-bay/services)/$1 is not a valid dir, exiting.."
 
-    elif [ ! -f ~/docker-bay/containers/"$1"/docker-compose.yml ];then
-        echo "docker-compose.yml not found in $(echo ~/docker-bay/containers)/$1, exiting.."
+    elif [ ! -f ~/docker-bay/services/"$1"/docker-compose.yml ];then
+        echo "docker-compose.yml not found in $(echo ~/docker-bay/services)/$1, exiting.."
 
     else
-        cd ~/docker-bay/containers/$1 \
+        cd ~/docker-bay/services/$1 \
             && docker-compose down \
             && cd ~/
     fi

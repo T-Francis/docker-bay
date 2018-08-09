@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  redis:
+    container_name: redis
+    image: redis
+    restart: always  
+    labels:
+      - traefik.backend=redis
+      - traefik.frontend.rule=Host:redis.local
+    networks:
+      - traefik
+      
+networks:
+  traefik:
+    external:
+      name: traefik_webgateway

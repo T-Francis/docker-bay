@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  ungit:
+    container_name: ungit
+    build:
+      context: ~/docker-bay/dockerfiles/ungit
+      dockerfile: Dockerfile
+    restart: always    
+    working_dir: /repositories
+    labels:
+      - traefik.port=8448
+      - traefik.backend=ungit
+      - traefik.frontend.rule=Host:ungit.local
+    volumes: 
+      - ~/docker-bay/workspaces:/repositories
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external:
+      name: traefik_webgateway
