@@ -1,17 +1,5 @@
 version: '3'
 
-services:
-  portainer_templates:
-    container_name: portainer-templates
-    image: nginx:alpine
-    restart: always   
-    labels:
-      - traefik.backend=portainer_templates
-    volumes:
-      - ~/docker-bay/volumes/portainer/templates/templates.json:/usr/share/nginx/html/templates.json
-    networks:
-      - traefik
-
   portainer:
     container_name: portainer-application
     image: portainer/portainer
@@ -19,7 +7,6 @@ services:
     labels:
       - traefik.backend=portainer
       - traefik.frontend.rule=Host:portainer.local
-    command: --templates http://portainer_templates/templates.json --host=unix:///var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/docker-bay/volumes/portainer/data:/data
