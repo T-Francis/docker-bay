@@ -27,31 +27,64 @@ function dockerbay-deploy() {
 
 #perform a docker-compose up / docker-compose up -d in a docker-bay container dir
 function dockerbay-up() {
+    SERVICE=$1
+    shift
 
-    detachedMode=$2
-    build=$3
-    if [ ! -d ~/docker-bay/services/"$1" ];then
-        echo "$(echo ~/docker-bay/services)/$1 is not a valid dir, exiting.."
+    if [ ! -d ~/docker-bay/services/"$SERVICE" ];then
+        echo "$(echo ~/docker-bay/services)/$SERVICE is not a valid dir, exiting.."
 
-    elif [ ! -f ~/docker-bay/services/"$1"/docker-compose.yml ];then
-        echo "docker-compose.yml not found in $(echo ~/docker-bay/services)/$1, exiting.."
+    elif [ ! -f ~/docker-bay/services/"$SERVICE"/docker-compose.yml ] && [ ! -f ~/docker-bay/services/"$SERVICE"/docker-compose.yaml ];then
+        echo "docker-compose.yml not found in $(echo ~/docker-bay/services)/$SERVICE, exiting.."
 
     else
-        if [ ! -z "$detachedMode" ]  &&  [ ! "$detachedMode" == "-d" ];then
-            echo -e "Second arg : $2 is invalid\n only -d will be accepted"
-
-        elif [ "$detachedMode" == "-d" ];then
-            cd ~/docker-bay/services/$1 \
-                && docker-compose up -d $3\
-                && cd ~/ 
-
-        elif [ -z "$detachedMode" ];then
-            cd ~/docker-bay/services/$1 \
-                && docker-compose up $3\
-                && cd ~/ 
-
+        if [ -f ~/docker-bay/services/"$SERVICE/.env" ];then
+            up-with-dot-env $SERVICE
+            cd ~/docker-bay/services/$SERVICE \
+            && docker-compose up $@ \
+            && cd ~/  
+        else
+            cd ~/docker-bay/services/$SERVICE \
+            && docker-compose up $@ \
+            && cd ~/ 
         fi
+
     fi
+}
+
+function up-with-dot-env(){
+
+    LOCATION=~/docker-bay/services/$SERVICE/
+    FILE=$LOCATION.env
+
+    # iterate over each line of the file
+    while read p; do
+
+        # spliting the current line
+        IFS='=' read -ra CURRENT_LINE <<< "$p"
+
+        KEY=${CURRENT_LINE[0]}
+        VALUE=${CURRENT_LINE[1]}
+
+        # Example to loop over the splited line
+        # for i in "${CURRENT_LINE[@]}"; do
+        #     # process "$i"
+        #     echo $i
+        # done
+
+        if [ -z "$VALUE" ];then
+
+            echo -e "WARNING: $KEY must be defined\nplease set a value:"
+            read INPUT </dev/tty
+            sed -i -e "s/$KEY=/$KEY=$INPUT/g" $FILE
+            
+        else
+            if [ "$DISPLAY_DEFINED_KEY" == 1 ];then
+            echo "$KEY is set on : $VALUE"
+            fi
+        fi
+
+    done <$FILE
+
 }
 
 #perform a docker-compose down in a docker-bay container dir
@@ -93,7 +126,7 @@ function dockerbay-permission() {
 
 #make a ssh tunnel to the given container 
 function dockerbay-tunnel() {
-    docker exec -it $1 sh -c "stty rows 50 && stty cols 150 && bash"
+    docker exec -it $@ sh -c "stty rows 50 && stty cols 150 && bash"
 }
 
 #perform a docker system prune all
