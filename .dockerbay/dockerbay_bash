@@ -37,7 +37,7 @@ function dockerbay-up() {
         echo "docker-compose.yml not found in $(echo ~/docker-bay/services)/$SERVICE, exiting.."
 
     else
-        if [ -f ~/docker-bay/services/"$SERVICE/.env" ];then
+        if [ -f ~/docker-bay/services/"$SERVICE/.env" ] || [ -f ~/docker-bay/services/"$SERVICE/.env-example" ];then
             up-with-dot-env $SERVICE
             cd ~/docker-bay/services/$SERVICE \
             && docker-compose up $@ \
@@ -52,6 +52,11 @@ function dockerbay-up() {
 }
 
 function up-with-dot-env(){
+
+    # if there is a .env-example and no .env already
+    if [ -f ~/docker-bay/services/"$SERVICE/.env-example" ] && [ ! -f ~/docker-bay/services/"$SERVICE/.env" ];then
+        cp ~/docker-bay/services/"$SERVICE/.env-example" ~/docker-bay/services/"$SERVICE/.env"
+    fi
 
     LOCATION=~/docker-bay/services/$SERVICE/
     FILE=$LOCATION.env
