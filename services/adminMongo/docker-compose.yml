@@ -4,19 +4,17 @@ services:
   adminmongo:
     container_name: adminmongo
     build:
-      context: ~/docker-bay/dockerfiles/adminmongo
+      context: ./docker
       dockerfile: Dockerfile
+      args:
+        GUI_PASSWORD: "${GUI_PASSWORD}"
     restart: always
-    environment:
-      - CONN_NAME=local
-      - DB_HOST=mongodb
-      - DB_PORT=27017
-      - DB_USERNAME=mongo-user
-      - DB_PASSWORD=mongo-user
     labels:
       - traefik.port=1234
       - traefik.backend=adminmongo
       - traefik.frontend.rule=Host:adminmongo.local
+    ports:
+      - 1234:1234
     depends_on:
       - "mongodb"
     command : node app.js
@@ -28,16 +26,10 @@ services:
     image: mongo:latest
     restart: always
     environment:
-      MONGODB_ADMIN_USER: root
-      MONGODB_ADMIN_PASS: root
-      MONGODB_APPLICATION_DATABASE: example_database
-      MONGODB_APPLICATION_USER: mongo-user
-      MONGODB_APPLICATION_PASS: mongo-user
-    labels:
-      - traefik.port=27017
-      - traefik.backend=mongodb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
     volumes: 
-      - ~/docker-bay/volumes/mongodb:/data/db
+      - ./volumes/db:/data/db
     networks:
       - traefik
 
