@@ -53,42 +53,54 @@ function dockerbay-up() {
 
 function up-with-dot-env(){
 
-    # if there is a .env-example and no .env already
-    if [ -f ~/docker-bay/services/"$SERVICE/.env-example" ] && [ ! -f ~/docker-bay/services/"$SERVICE/.env" ];then
-        cp ~/docker-bay/services/"$SERVICE/.env-example" ~/docker-bay/services/"$SERVICE/.env"
-    fi
-
-    LOCATION=~/docker-bay/services/$SERVICE/
-    FILE=$LOCATION.env
+ echo -e "\nParsing the file...\n"
+    # target file is the received argument
+    file=~/docker-bay/services/$1/.env
 
     # iterate over each line of the file
     while read p; do
 
-        # spliting the current line
-        IFS='=' read -ra CURRENT_LINE <<< "$p"
+        # split the current line
+        IFS='=' read -ra currentLine <<< "$p"
+        key=${currentLine[0]}
+        value=${currentLine[1]}
 
-        KEY=${CURRENT_LINE[0]}
-        VALUE=${CURRENT_LINE[1]}
+        #if the current line is not a comment or a blank line
+        if [[ ! "$currentLine" == \#* ]] && [ ! -z "$currentLine" ] && [[ ! "$key" == "APP_KEY" ]];then
 
-        # Example to loop over the splited line
-        # for i in "${CURRENT_LINE[@]}"; do
-        #     # process "$i"
-        #     echo $i
-        # done
-
-        if [ -z "$VALUE" ];then
-
-            echo -e "WARNING: $KEY must be defined\nplease set a value:"
-            read INPUT </dev/tty
-            sed -i -e "s/$KEY=/$KEY=$INPUT/g" $FILE
-            
-        else
-            if [ "$DISPLAY_DEFINED_KEY" == 1 ];then
-            echo "$KEY is set on : $VALUE"
+            # privacy condition
+            if [[ "$key" = *"PASSWORD"*  ]] || [[ "$key" = *"password"*  ]];then
+                secret=true
+            else
+                secret=false
             fi
+
+            # if the value is not defined, we require a user input
+            if [ -z "$value" ];then
+
+                if [ $secret = false ];then
+                    read -p "Warning: $key must be defined please set a value:" input </dev/tty                     
+                else
+                    read -s -p "Warning: $key must be defined please set a value (input is hidden):" input </dev/tty
+                fi
+
+                # sed the key/value pair in the .env file
+                sed -i -e "s/$key=/$key=$input/g" $file
+
+            else
+
+                if [ $displayKey = "Yes" ] || [ $displayKey = "yes" ] || [ $displayKey = "Y" ] || [ $displayKey = "y" ] && [ $secret = false ] ;then
+                    echo "$key is set on : $value"
+                    elif [ $displayKey = "Yes" ] || [ $displayKey = "yes" ] || [ $displayKey = "Y" ] || [ $displayKey = "y" ] && [ $secret = true ] ;then
+                    echo "$key may contain a password, content hidden but is defined"
+                fi
+
+            fi
+
         fi
 
-    done <$FILE
+    done <$file
+    echo -e '.env created...\nDONE.'
 
 }
 
