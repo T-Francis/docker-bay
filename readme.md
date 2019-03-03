@@ -248,7 +248,14 @@ networks:
         - Remove of the `php` and `nodejs` container (will be convert in dockerfiles/image)
         - Remove of the `clean-clrf` function (didn't work as expected)
         - Rewrite of the docker compose files, remove of the quote, structuration of the yaml        
-
+ 
+## Git commit 
+ 
+- [*] release/documentation 
+- [-] deletion 
+- [+] addition 
+- [~] update/refactor 
+ 
 ## ***To do***
 
 - have a better management of arguments for dockerbay shortcuts (docker compose --build, docker exec --user, etc...)
