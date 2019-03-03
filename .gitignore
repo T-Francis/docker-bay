@@ -1,34 +1,13 @@
-## [ Docker-bay]
-    #[ container ]
+# [Docker-bay]
+# .env files MUST be ignored as the may contains sensitive information
+.env
+### [APPS]
+!apps/
+apps/*
 
-# ignoring private container
-*/private
-
-## [ Docker-bay]
-    #[ workspaces ]
-
-#workspaces will be mostly exclude but exceptions are made so we need to uningnore it first, then ignoring ./* content
-!workspaces/
-workspaces/*
-
-#set workspaces/nodejs and php apps ungignored but ignore ./*, then unignore any app folder you want
-!workspaces/nodejs-apps/
-workspaces/nodejs-apps/*
-
-#custom nodejs-app ungignore
-#!workspaces/nodejs-apps/app-you-want-unignore/
-
-## [ Docker-bay]
-    #[ volumes ]
-
-#volumes will be mostly exclude but exceptions are made so we need to uningnore it first, then ignoring ./* content
-!volumes/
-volumes/*
-
-# unignore portainer templates
-!volumes/portainer/
-volumes/portainer/*
-!volumes/portainer/templates/
+### [STORAGES]
+!storages/
+storages/*
 
 ## [ linux userdir ] 
 .bash_history
