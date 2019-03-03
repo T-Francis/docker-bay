@@ -1,18 +1,27 @@
 version: '3'
 
 services:
+
+  #-ADMINER
   adminer:
     container_name: adminer
-    image: adminer
     restart: always
+    image: adminer:latest
+    environment:
+      - TZ=${GLOBAL_TZ}
     labels:
       - traefik.port=8080    
       - traefik.backend=adminer
-      - traefik.frontend.rule=Host:adminer.local
+      - traefik.frontend.auth.basic=${GLOBAL_BASIC_AUTH_USER}:${GLOBAL_BASIC_AUTH_PASSWORD}
+      - traefik.frontend.rule=Host:adminer.${GLOBAL_DOMAIN}
     networks:
-      - traefik
-
+      - gateway_web
+      - gateway_sgbd
+  
 networks:
-  traefik:
+  gateway_web:
     external:
-      name: traefik_webgateway
+      name: gateway_web
+  gateway_sgbd:
+    external:
+      name: gateway_sgbd
