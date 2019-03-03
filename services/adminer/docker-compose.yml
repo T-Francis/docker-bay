@@ -10,7 +10,6 @@ services:
     environment:
       - TZ=${GLOBAL_TZ}
     labels:
-      - traefik.port=8080    
       - traefik.backend=adminer
       - traefik.frontend.auth.basic=${GLOBAL_BASIC_AUTH_USER}:${GLOBAL_BASIC_AUTH_PASSWORD}
       - traefik.frontend.rule=Host:adminer.${GLOBAL_DOMAIN}
