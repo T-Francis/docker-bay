@@ -1,30 +1,24 @@
 version: '3'
 
 services:
+
+  #-PORTAINER
   portainer:
-    container_name: portainer-application
-    image: portainer/portainer
-    restart: always  
+    container_name: portainer
+    restart: always
+    image: portainer/portainer:latest
+    environment:
+      - TZ=${GLOBAL_TZ} 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PORTAINER_DATA_VOLUME}:/data
     labels:
       - traefik.backend=portainer
-      - traefik.frontend.rule=Host:portainer.local
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ~/docker-bay/volumes/portainer/data:/data
+      - traefik.frontend.rule=Host:portainer.${GLOBAL_DOMAIN}
     networks:
-      - traefik
-
-  watchtower:
-    container_name: portainer-watchtower
-    image: v2tec/watchtower
-    restart: always
-    command: --cleanup portainer-app portainer-watchtower portainer/templates
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - traefik
+      - gateway_web
 
 networks:
-  traefik:
+  gateway_web:
     external:
-      name: traefik_webgateway
+      name: gateway_web
