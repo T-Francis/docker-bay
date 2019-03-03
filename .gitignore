@@ -1,6 +1,6 @@
 # [Docker-bay]
 # .env files MUST be ignored as the may contains sensitive information
-.env
+*.env
 ### [APPS]
 !apps/
 apps/*
