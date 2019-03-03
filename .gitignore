@@ -8,6 +8,7 @@ apps/*
 ### [STORAGES]
 !storages/
 storages/*
+!storages/traefik/zero-conf/*
 
 ## [ linux userdir ] 
 .bash_history
