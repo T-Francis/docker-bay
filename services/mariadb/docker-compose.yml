@@ -1,24 +1,21 @@
 version: '3'
 
 services:
+
+  # MARIADB
   mariadb:
     container_name: mariadb
-    image: mariadb
     restart: always
+    image: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: example_database
-      MYSQL_USER: mariadb-user
-      MYSQL_PASSWORD: mariadb-user
-    labels:
-      - traefik.port=3306
-      - traefik.backend=mariadb
+      - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - TZ=${GLOBAL_TZ}    
     volumes:
-      - ~/docker-bay/volumes/mariadb-data:/var/lib/mysql
+      - ${MARIADB_DUMP_PATH}:/docker-entrypoint-initdb.d
     networks:
-      - traefik
+      - gateway_sgbd
 
 networks:
-  traefik:
+  gateway_sgbd:
     external:
-      name: traefik_webgateway
+      name: gateway_sgbd
